@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    background-color: #181818;
+    color: #CFCFCF;
+}
+
+#root {
+    width: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+
+@media (orientation: landscape) {
+    video-info[infolevel="full"] {
+        width: 100%;
+        height: 25vw;
+    }
+    
+    video-info:not([infolevel]) {
+        width: 25vh;
+        height: 15vh;
+    }
+}
+
+@media (orientation: portrait) {
+    video-info[infolevel="full"] {
+        width: 100%;
+        height: 25vh;
+    }
+    
+    video-info:not([infolevel]) {
+        width: 20vh;
+        height: 10vh;
+    }
+}
+
+video-info:not([infolevel]) {
+    margin: 0.3em;
+}
+
+jsi-carousel {
+    height: auto;
+    width: 90%;
+}

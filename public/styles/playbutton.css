@@ -1,0 +1,19 @@
+:host {
+    font-size: 0.8rem;
+    width: auto;
+    font-weight: 900;
+    height: 1.5em;
+    border-radius: 0.5em;
+    background-color: rgb(62, 62, 62);
+    padding: 0.3em 0.5em;
+    overflow: hidden;
+    text-align: center;
+}
+
+:host .playbutton__text::after {
+    content: ">";
+}
+
+:host(:hover) {
+    background-color: rgb(188, 29, 29);
+}

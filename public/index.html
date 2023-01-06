@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
+        <link rel="stylesheet" type="text/css" charset="UTF-8" href="styles/juststreamit.css" />
+        <script src="js/app.js" type="module"></script>
+        <title>JustStreamIt</title>
+        <meta name="description" content="JustStreamIt: Application de lecture de film en ligne.">
+        <meta name="author" content="MeldSnake">
+        <link rel="icon" href="/favicon.ico">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <template id="videoinfotemplate">
+            <link rel="stylesheet" href="styles/videoinfo.css">
+            <div class="videoinfo">
+                <picture id="picture">
+                    <img class="videoinfo__cover" src="imgs/nocover.png" alt="Couverture du film">
+                </picture>
+                <div class="videoinfo__data">
+                    <div class="videoinfo_data__info"">
+                        <slot name="title">Titre du film</slot>
+                        <span class="videoinfo_data_info__extra">
+                            <slot name="score">0.0</slot>
+                        </span>
+                    </div>
+                    <play-button id="play-button"></play-button>
+                </div>
+            </div>
+        </template>
+        <template id="carouseltemplate">
+            <link rel="stylesheet" href="styles/carousel.css">
+            <div class="carousel">
+                <i id="left" class="carousel__previous">&lt;</i>
+                <div class="carousel__items">
+                    <slot></slot>
+                </div>
+                <i id="right" class="carousel__next">&gt;</i>
+            </div>
+        </template>
+        <template id="playbuttontemplate">
+            <link rel="stylesheet" href="styles/playbutton.css">
+            <span class="playbutton__text">
+                <slot name="text"><span>Play</span></slot>
+            </span>
+        </template>
+    </head>
+    <body>
+        <noscript>Vous devez activer javascript pour utiliser ce site.</noscript>
+        <div id="root"></div>
+    </body>
+</html>
