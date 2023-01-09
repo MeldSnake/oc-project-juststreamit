@@ -1,0 +1,23 @@
+@import "constants/colors.scss";
+
+:host {
+    cursor: pointer;
+    font-size: 0.8em;
+    width: auto;
+    font-weight: 900;
+    height: 1.5em;
+    border-radius: 0.5em;
+    color: $button_fg;
+    background-color: $button_bg;
+    padding: 0.3em 0.5em;
+    overflow: hidden;
+    text-align: center;
+    
+    .playbutton__text::after {
+        content: ">";
+    }
+}
+    
+:host(:hover) {
+    background-color: $button_active;
+}

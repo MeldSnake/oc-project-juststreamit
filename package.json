@@ -1,0 +1,25 @@
+{
+  "name": "project-6",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sass-watch": "node sass-postcss.mjs -w",
+    "build": "node sass-postcss.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "postcss-advanced-variables": "^3.0.1",
+    "postcss-nested": "^6.0.0",
+    "postcss-scss": "^4.0.6",
+    "sass": "^1.57.1"
+  },
+  "browserslist": [
+    "> 2%"
+  ]
+}

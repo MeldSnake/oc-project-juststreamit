@@ -1,0 +1,10 @@
+@use "sass:color";
+
+$default_bg: #181818;
+$default_fg: #CFCFCF;
+
+$button_active: rgb(188, 29, 29);
+$button_bg: rgb(62, 62, 62);
+$button_fg: color.change(white, $alpha: 0.6);
+
+$videoinfo_background: linear-gradient(rgba(0,0,0, 0.4), black);
