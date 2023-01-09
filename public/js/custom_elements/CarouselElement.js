@@ -11,7 +11,6 @@ class CarouselElement extends HTMLElement {
         this.attachShadow({
             mode: "open",
         });
-        this.itemIndex = 0;
         /** @type {HTMLElement[]} */
         this.items = [];
         /** @type {HTMLTemplateElement|null} */

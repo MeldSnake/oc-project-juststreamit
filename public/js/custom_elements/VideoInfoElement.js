@@ -92,7 +92,6 @@ class VideoInfoElement extends HTMLElement {
             this.dispatchEvent(new CustomEvent("playmovie", {
                 bubbles: true,
                 cancelable: true,
-                detail: movieId,
             }));
         }, {
             signal: this.__connectSignal.signal,
