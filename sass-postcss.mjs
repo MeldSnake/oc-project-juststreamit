@@ -18,22 +18,26 @@ const postCssProcessor = postcss([autoprefixer, postcssNested, postcssAdvancedVa
  * @param {string} destPath
  */
 async function processSCSS(filePath, destPath) {
-    const compiled = await sass.compileAsync(
-        filePath, {
-            sourceMap: false,
-        }
-    );
-    const processed = await postCssProcessor
-        .process(compiled.css, {
-            map: false,
-            from: undefined,
-        });
-    let fd;
     try {
-        fd = await fsp.open(destPath, "w");
-        await fd.write(processed.css, null, "utf8");
-    } finally {
-        await fd.close();
+        const compiled = await sass.compileAsync(
+            filePath, {
+                sourceMap: false,
+            }
+        );
+        const processed = await postCssProcessor
+            .process(compiled.css, {
+                map: false,
+                from: undefined,
+            });
+        let fd;
+        try {
+            fd = await fsp.open(destPath, "w");
+            await fd.write(processed.css, null, "utf8");
+        } finally {
+            await fd.close();
+        }
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -44,9 +48,13 @@ async function processSCSS(filePath, destPath) {
  */
 async function processFile(srcPath, destPath, filePath) {
     console.log("Processing %s -> %s", filePath, destPath);
-    await fsp.mkdir(destPath, {
-        recursive: true,
-    });
+    {
+        if (!fs.existsSync(destPath)) {
+            await fsp.mkdir(destPath, {
+                recursive: false,
+            });
+        }
+    }
     const fullFilePath = path.join(srcPath, filePath);
     const stat = await fsp.stat(fullFilePath);
     

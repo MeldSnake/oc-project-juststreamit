@@ -1,7 +1,7 @@
 class PlayButtonElement extends HTMLElement {
     static register() {
         if (!PlayButtonElement.__registered) {
-            customElements.define("play-button", PlayButtonElement);
+            customElements.define("jsi-play-button", PlayButtonElement);
             PlayButtonElement.__registered = true;
         }
     }
@@ -11,8 +11,11 @@ class PlayButtonElement extends HTMLElement {
         this.attachShadow({
             mode: "open",
         });
-        /** @type {HTMLTemplateElement} */
+        if (this.shadowRoot === null) {
+            throw new Error("Unable to attach a shadow root");
+        }
         const template = document.querySelector('template#playbuttontemplate');
+
         if (template === null) {
             throw Error("Play button template not found!");
         }

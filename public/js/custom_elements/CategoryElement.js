@@ -1,4 +1,6 @@
 import CarouselElement from "./CarouselElement.js";
+import APIUrl from "../Constants.js";
+import VideoInfoElement from "./VideoInfoElement.js";
 
 class CategoryElement extends HTMLElement {
     static register() {
@@ -9,37 +11,32 @@ class CategoryElement extends HTMLElement {
         CarouselElement.register();
     }
 
-    get title() {
-        if (this.hasAttribute("title")) {
-            return this.getAttribute("title") || "Category";
+    get categoryname() {
+        if (this.hasAttribute("categoryname")) {
+            return this.getAttribute("categoryname") || "Category";
         }
         return "Category";
     }
 
-    /**
-     * @param {string|undefined} value
-     */
-    set title(value) {
-        if (value === undefined) {
-            this.removeAttribute("title");
+    set categoryname(value) {
+        if (value === undefined || value === null) {
+            this.removeAttribute("categoryname");
         } else {
-            this.setAttribute("title");
+            this.setAttribute("categoryname", value);
         }
     }
 
     set categoryId(value) {
-        self.__categoryId = value;
-        self.clear();
-        self.dispatchEvent(new CustomEvent(
-            "onLoadCategory", {
-                cancelable: true,
-            }
-        ));
+        this.__categoryId = value;
+        this.clear();
+        this.dispatchEvent(new CustomEvent("onLoadCategory", {
+            cancelable: true,
+        }));
     }
 
     static get observedAttributes() {
         return [
-            'title',
+            'categoryname',
         ];
     }
 
@@ -48,27 +45,98 @@ class CategoryElement extends HTMLElement {
         this.attachShadow({
             mode: "open",
         });
-        /** @type {HTMLTemplateElement|null} */
+        if (this.shadowRoot === null) {
+            throw new Error("Unable to attach a shadow root");
+        }
         const template = document.querySelector("template#categorytemplate");
+
         if (template === null) {
             throw Error("Category template not found");
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.__title = this.shadowRoot.getElementById("title");
         this.__carousel = this.shadowRoot.getElementById("carousel");
-        self.__categoryId = -1;
-        self.__pending_task = Promise.resolve();
-        self.__pending_task_signal = new AbortController();
+        this.__categoryId = -1;
+        this.__pending_task = Promise.resolve();
+        this.__pending_task_signal = new AbortController();
+        this.__items = [];
+    }
+
+    connectedCallback() {
+        this.clear();
+        this.update();
+    }
+
+    disconnectedCallback() {
+        this.clear();
     }
 
     async __is_completed_task() {
-        return (await Promise.race([self.__pending_task, 'pending'])) === "pending";
+        return (await Promise.race([this.__pending_task, 'pending'])) === "pending";
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "title") {
+    attributeChangedCallback(name, _, newValue) {
+        if (name === "categoryname" && this.__title !== null) {
             this.__title.innerText = newValue;
         }
+    }
+
+    update() {
+        if (this.__carousel === null)
+            return;
+        const url = new URL("titles", APIUrl());
+        const category = this.categoryname;
+        const order = ["-imdb_score", "-year", "title"];
+
+        url.searchParams.set("page_size", "7");
+        switch (this.categoryname) {
+        case "Meilleur film":
+            url.searchParams.set("page_size", "1");
+            break;
+        case "Films les mieux notés":
+            break;
+        default:
+            url.searchParams.set("genre", category);
+            break;
+        }
+        if (order.length !== 0) {
+            url.searchParams.set("sort_by", order.join(","));
+        }
+        this.__pending_task_signal.abort("Updating");
+        this.__pending_task_signal = new AbortController();
+        fetch(url, {
+            method: "GET",
+            redirect: "follow",
+            mode: "cors",
+            signal: this.__pending_task_signal.signal,
+        })
+            .then(this.__appendMovies.bind(this))
+            .then((results) => {
+                if (results.length !== 0 && this.__carousel !== null) {
+                    this.__items.push(...results);
+                    results.forEach(this.__carousel.appendChild.bind(this.__carousel));
+                }
+            })
+            .catch(this.clear.bind(this));
+    }
+
+    async __appendMovies(response) {
+        if (!response.ok)
+            return [];
+        const data = await response.json();
+
+        if (data === undefined || data === null)
+            return [];
+        return data.results
+            .map(VideoInfoElement.fromTitleInfo.bind(null))
+            .filter((x) => x !== undefined);
+    }
+
+    clear() {
+        this.__items.splice(0).forEach(x => x.remove());
+        this.__pending_task_signal.abort();
+        this.__pending_task_signal = new AbortController();
+        return null;
     }
 }
 

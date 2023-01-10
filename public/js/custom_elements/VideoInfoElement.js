@@ -1,6 +1,23 @@
 import PlayButtonElement from "./PlayButtonElement.js";
 
 class VideoInfoElement extends HTMLElement {
+    get titleid() {
+        const titleid = this.getAttribute("data-titleid");
+
+        if (titleid !== null) {
+            if (/^\d+$/.test(titleid)) {
+                return Number.parseInt(titleid);
+            }
+        }
+        return -1;
+    }
+
+    set titleid(id) {
+        if (id === -1) {
+            this.removeAttribute("data-titleid");
+        }
+        this.setAttribute("data-titleid", id.toFixed(0));
+    }
 
     get infolevel() {
         if (this.hasAttribute("infolevel")) {
@@ -10,9 +27,6 @@ class VideoInfoElement extends HTMLElement {
         return "short";
     }
 
-    /**
-     * @param {"full"|"short"|undefined|null} value
-     */
     set infolevel(value) {
         if (value === undefined || value === null) {
             this.removeAttribute("infolevel");
@@ -29,36 +43,30 @@ class VideoInfoElement extends HTMLElement {
 
     static register() {
         if (VideoInfoElement.__registered == undefined) {
-            customElements.define("video-info", VideoInfoElement);
+            PlayButtonElement.register();
+            customElements.define("jsi-video-info", VideoInfoElement);
             VideoInfoElement.__registered = true;
         }
-        PlayButtonElement.register();
     }
 
-    /**
-     * 
-     * @param {string|undefined} title 
-     * @param {string|undefined} cover 
-     * @param {(number|string|undefined)} score 
-     */
     constructor() {
         super();
         this.attachShadow({
             mode: "open",
         });
-        /** @type {HTMLTemplateElement|null} */
+        if (this.shadowRoot === null) {
+            throw new Error("Unable to attach the shadow root");
+        }
         const template = document.querySelector("template#videoinfotemplate");
+
         if (template === null) {
             throw Error("Video info template not found!");
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.__connectSignal = new AbortController();
-        /** @type {HTMLDivElement} */
         this.__root = this.shadowRoot.querySelector(".videoinfo");
-        this.attributeChangedCallback("infosize", null, this.infolevel);
-        /** @type {PlayButtonElement} */
+        this.attributeChangedCallback("infolevel", null, this.infolevel);
         this.__play = this.shadowRoot.querySelector("#play-button");
-        /** @type {HTMLPictureElement} */
         this.__picture = this.shadowRoot.querySelector("#picture");
         this.__mutationObserver = new MutationObserver(this.__onMutatedElement.bind(this));
         this.__mutationObserver.observe(this, {
@@ -66,11 +74,10 @@ class VideoInfoElement extends HTMLElement {
         });
     }
 
-    /**
-     * @param {MutationRecord[]} mutations 
-     * @param {MutationObserver} observer 
-     */
-    __onMutatedElement(mutations, observer) {
+    __onMutatedElement(mutations, _) {
+        if (this.__picture === null) {
+            return;
+        }
         for (const mutation of mutations) {
             if (mutation.addedNodes) {
                 for (const node of mutation.addedNodes) {
@@ -85,13 +92,28 @@ class VideoInfoElement extends HTMLElement {
     }
 
     connectedCallback() {
-        if (!this.isConnected) return;
+        if (!this.isConnected || this.__play === null)
+            return;
+        this.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            this.dispatchEvent(new CustomEvent("infotitle", {
+                bubbles: true,
+                composed: true,
+                cancelable: true,
+                detail: this.titleid,
+            }));
+        }, {
+            signal: this.__connectSignal.signal,
+        });
         this.__play.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
-            this.dispatchEvent(new CustomEvent("playmovie", {
+            this.dispatchEvent(new CustomEvent("playtitle", {
                 bubbles: true,
+                composed: true,
                 cancelable: true,
+                detail: this.titleid,
             }));
         }, {
             signal: this.__connectSignal.signal,
@@ -103,13 +125,9 @@ class VideoInfoElement extends HTMLElement {
         this.__connectSignal = new AbortController();
     }
 
-    /**
-     * Called during the life-cycle of the custom element for each attribute named given within the observedAttribute static field.
-     * @param {string} name
-     * @param {any} oldValue
-     * @param {any} newValue
-     */
     attributeChangedCallback(name, oldValue, newValue) {
+        if (this.__root === null)
+            return;
         if (name === "infolevel") {
             if (newValue !== oldValue) {
                 if (newValue === "full") {
@@ -123,6 +141,28 @@ class VideoInfoElement extends HTMLElement {
         }
     }
 
+    static fromTitleInfo(titleInfo, short = true) {
+        const element = new VideoInfoElement();
+        const title = document.createElement("span");
+        const score = document.createElement("span");
+        const source = document.createElement("source");
+
+        title.innerText = titleInfo.title;
+        score.innerText = titleInfo.imdb_score;
+        source.srcset = titleInfo.image_url || "imgs/nocover.png";
+        title.slot = "title";
+        element.appendChild(title);
+        score.slot = "score";
+        element.appendChild(score);
+        element.appendChild(source);
+        element.infolevel = short ? "short" : "full";
+        element.titleid = titleInfo.id;
+        return element;
+    }
+
+    addEventListener(type, listener, options) {
+        super.addEventListener(type, listener, options);
+    }
 }
 
 export default VideoInfoElement;
