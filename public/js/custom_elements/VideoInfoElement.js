@@ -1,6 +1,9 @@
 import PlayButtonElement from "./PlayButtonElement.js";
 
 class VideoInfoElement extends HTMLElement {
+    /** @type {boolean | undefined} */
+    static __registered;
+
     get titleid() {
         const titleid = this.getAttribute("data-titleid");
 
@@ -66,7 +69,9 @@ class VideoInfoElement extends HTMLElement {
         this.__connectSignal = new AbortController();
         this.__root = this.shadowRoot.querySelector(".videoinfo");
         this.attributeChangedCallback("infolevel", null, this.infolevel);
+        /** @type {PlayButtonElement | null} */
         this.__play = this.shadowRoot.querySelector("#play-button");
+        /** @type {HTMLPictureElement | null} */
         this.__picture = this.shadowRoot.querySelector("#picture");
         this.__mutationObserver = new MutationObserver(this.__onMutatedElement.bind(this));
         this.__mutationObserver.observe(this, {
@@ -74,6 +79,11 @@ class VideoInfoElement extends HTMLElement {
         });
     }
 
+    /**
+     * 
+     * @param {MutationRecord[]} mutations
+     * @param {MutationObserver} _
+     */
     __onMutatedElement(mutations, _) {
         if (this.__picture === null) {
             return;
@@ -125,6 +135,11 @@ class VideoInfoElement extends HTMLElement {
         this.__connectSignal = new AbortController();
     }
 
+    /**
+     * @param {string} name
+     * @param {any} oldValue
+     * @param {any} newValue
+     */
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.__root === null)
             return;
@@ -141,6 +156,11 @@ class VideoInfoElement extends HTMLElement {
         }
     }
 
+    /**
+     * @param {import('../models.js').ITitleShortData} titleInfo 
+     * @param {boolean} short 
+     * @returns 
+     */
     static fromTitleInfo(titleInfo, short = true) {
         const element = new VideoInfoElement();
         const title = document.createElement("span");
@@ -158,10 +178,6 @@ class VideoInfoElement extends HTMLElement {
         element.infolevel = short ? "short" : "full";
         element.titleid = titleInfo.id;
         return element;
-    }
-
-    addEventListener(type, listener, options) {
-        super.addEventListener(type, listener, options);
     }
 }
 

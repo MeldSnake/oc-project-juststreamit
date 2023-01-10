@@ -1,4 +1,7 @@
 class CarouselElement extends HTMLElement {
+    /** @type {boolean | undefined} */
+    static __registered;
+
     static register() {
         if (!CarouselElement.__registered) {
             customElements.define("jsi-carousel", CarouselElement);
@@ -53,6 +56,10 @@ class CarouselElement extends HTMLElement {
         this.__connectionSignal.abort("disconnection");
     }
 
+    /**
+     * @param {Element} element
+     * @param {Element} container
+     */
     static IsElementIntoView(element, container) {
         if (container === undefined || container === null) {
             if (document.firstElementChild === null) {
@@ -73,6 +80,9 @@ class CarouselElement extends HTMLElement {
             && element_rect.right <= container_rect.right);
     }
 
+    /**
+     * @param {number} count
+     */
     moveBy(count) {
         if (count === 0)
             return;
@@ -88,7 +98,12 @@ class CarouselElement extends HTMLElement {
         return;
     }
 
-    __onNodeMutation(mutations, _) {
+    /**
+     * 
+     * @param {MutationRecord[]} mutations
+     * @param {MutationObserver} _observer
+     */
+    __onNodeMutation(mutations, _observer) {
         for (const mutation of mutations) {
             let nextElement = mutation.nextSibling;
 

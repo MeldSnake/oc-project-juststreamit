@@ -3,12 +3,16 @@ import APIUrl from "../Constants.js";
 import VideoInfoElement from "./VideoInfoElement.js";
 
 class CategoryElement extends HTMLElement {
+    /** @type {boolean | undefined} */
+    static __registered;
+
     static register() {
         if (!CategoryElement.__registered) {
+            CarouselElement.register();
+
             customElements.define("jsi-category", CategoryElement);
             CategoryElement.__registered = true;
         }
-        CarouselElement.register();
     }
 
     get categoryname() {
@@ -26,6 +30,9 @@ class CategoryElement extends HTMLElement {
         }
     }
 
+    /**
+     * @param {number} value
+     */
     set categoryId(value) {
         this.__categoryId = value;
         this.clear();
@@ -55,10 +62,12 @@ class CategoryElement extends HTMLElement {
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.__title = this.shadowRoot.getElementById("title");
+        /** @type {CarouselElement | null} */
         this.__carousel = this.shadowRoot.getElementById("carousel");
         this.__categoryId = -1;
         this.__pending_task = Promise.resolve();
         this.__pending_task_signal = new AbortController();
+        /** @type {VideoInfoElement[]} */
         this.__items = [];
     }
 
@@ -75,7 +84,12 @@ class CategoryElement extends HTMLElement {
         return (await Promise.race([this.__pending_task, 'pending'])) === "pending";
     }
 
-    attributeChangedCallback(name, _, newValue) {
+    /**
+     * @param {string} name
+     * @param {any} _oldValue
+     * @param {any} newValue
+     */
+    attributeChangedCallback(name, _oldValue, newValue) {
         if (name === "categoryname" && this.__title !== null) {
             this.__title.innerText = newValue;
         }
@@ -111,18 +125,25 @@ class CategoryElement extends HTMLElement {
             signal: this.__pending_task_signal.signal,
         })
             .then(this.__appendMovies.bind(this))
-            .then((results) => {
-                if (results.length !== 0 && this.__carousel !== null) {
-                    this.__items.push(...results);
-                    results.forEach(this.__carousel.appendChild.bind(this.__carousel));
-                }
-            })
+            .then(
+                /** @param {VideoInfoElement[]} results */
+                (results) => {
+                    if (results.length !== 0 && this.__carousel !== null) {
+                        this.__items.push(...results);
+                        results.forEach(this.__carousel.appendChild.bind(this.__carousel));
+                    }
+                })
             .catch(this.clear.bind(this));
     }
 
+    /**
+     * @param {Response} response
+     * @returns {Promise<VideoInfoElement[]>}
+     */
     async __appendMovies(response) {
         if (!response.ok)
             return [];
+        /** @type {import('../models.js').IPagination<import('../models.js').ITitleShortData>} */
         const data = await response.json();
 
         if (data === undefined || data === null)
