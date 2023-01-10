@@ -51,12 +51,44 @@
                 <jsi-carousel id="carousel"></jsi-carousel>
             </div>
         </template>
+        <template id="modaltemplate">
+            <link rel="stylesheet" href="styles/modal.css">
+            <div id="border" class="border">
+                <div class="wrapper">
+                    <div class="wrapper__top">
+                        <slot name="title">Title</slot>
+                    </div>
+                    <div class="wrapper__bottom">
+                        <div class="wrapper__bottom__cover">
+                            <picture id="cover">
+                                <img src="imgs/nocover.png" alt="Couverture du film">
+                            </picture>
+                        </div>
+                        <div class="wrapper__bottom__info">
+                            <b>Informations:</b>
+                            <div class="wrapper__bottom__info__form">
+                                <span class="wrapper__bottom__info__form__label">Actors</span>
+                                <slot class="wrapper__bottom__info__form__value" name="actors">...</slot>
+                                <span class="wrapper__bottom__info__form__label">Writers</span>
+                                <slot class="wrapper__bottom__info__form__value" name="writers">...</slot>
+                            </div>
+                            <b>Description:</b>
+                            <div class="wrapper__bottom__info__description">
+                                <slot name="description">Aucune description disponible.</slot>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
     </head>
+    <header>Logo</header>
     <body>
         <noscript>Vous devez activer javascript pour utiliser ce site.</noscript>
-        <div id="root"></div>
-        <footer>
-            Created by MeldSnake 09/01/2023
-        </footer>
+        <jsi-root id="root"></jsi-root>
     </body>
+    <footer>
+        Credits.
+        Created by MeldSnake 09/01/2023
+    </footer>
 </html>
