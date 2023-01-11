@@ -1,5 +1,13 @@
 import APIUrl from "../Constants.js";
 
+const MappedSlotModalData = new Map([
+    ["score", x => x.imdb_score],
+    ["actors", x => x.actors.join(", ")],
+    ["writers", x => x.writers.join(", ")],
+    ["directors", x => x.directors.join(", ")],
+    ["genres", x => x.genres.join(", ")],
+]);
+
 class ModalElement extends HTMLElement {
     static register() {
         if (!ModalElement.__registered) {
@@ -22,7 +30,14 @@ class ModalElement extends HTMLElement {
             throw Error("Modal template not found!");
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
+        /** @type {HTMLElement | null} */
         this.__border = this.shadowRoot.getElementById("border");
+        this.__mutationObserver = new MutationObserver(this.__onMutation.bind(this));
+        this.__mutationObserver.observe(this, {
+            childList: true,
+        });
+        /** @type {HTMLPictureElement | null} */
+        this.__picture = this.shadowRoot.getElementById("cover");
     }
 
     connectedCallback() {
@@ -48,6 +63,24 @@ class ModalElement extends HTMLElement {
     disconnectedCallback() {
         if (this.__connectedSignal !== undefined) {
             this.__connectedSignal.abort();
+        }
+    }
+
+    /**
+     * @param {MutationRecord} mutations
+     * @param {MutationObserver} _observer
+     */
+    __onMutation(mutations, _observer) {
+        if (this.__picture === null)
+            return;
+        for (const mutation of mutations) {
+            if (mutation.addedNodes) {
+                for (const addedNode of mutation.addedNodes) {
+                    if (addedNode instanceof HTMLSourceElement) {
+                        this.__picture.insertBefore(addedNode, this.__picture.firstChild);
+                    }
+                }
+            }
         }
     }
 
@@ -89,8 +122,7 @@ class ModalElement extends HTMLElement {
         const modal = new ModalElement();
         const title = document.createElement("span");
         const source = document.createElement("source");
-        const actors = document.createElement("span");
-        const writers = document.createElement("span");
+        const description = document.createElement("span");
 
         title.slot = "title";
         title.innerText = data.title;
@@ -99,12 +131,16 @@ class ModalElement extends HTMLElement {
             source.srcset = data.image_url;
             modal.appendChild(source);
         }
-        actors.slot = "actors";
-        actors.innerText = data.actors.join(", ");
-        modal.appendChild(actors);
-        writers.slot = "writers";
-        writers.innerText = data.writers.join(", ");
-        modal.appendChild(writers);
+        MappedSlotModalData.forEach((value, key) => {
+            const element = document.createElement("span");
+
+            element.slot = key;
+            element.innerText = value(data);
+            modal.appendChild(element);
+        });
+        description.slot = "description";
+        description.innerText = data.long_description;
+        modal.appendChild(description);
         signal === null || signal === void 0 ? void 0 : signal.addEventListener("abort", () => modal.remove());
         return modal;
     }

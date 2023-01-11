@@ -67,10 +67,16 @@
                         <div class="wrapper__bottom__info">
                             <b>Informations:</b>
                             <div class="wrapper__bottom__info__form">
-                                <span class="wrapper__bottom__info__form__label">Actors</span>
-                                <slot class="wrapper__bottom__info__form__value" name="actors">...</slot>
-                                <span class="wrapper__bottom__info__form__label">Writers</span>
-                                <slot class="wrapper__bottom__info__form__value" name="writers">...</slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Score</b></span>
+                                <slot class="wrapper__bottom__info__form__label" name="score"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Acteurs</b></span>
+                                <slot class="wrapper__bottom__info__form__label" name="actors"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Scenaristes</b></span>
+                                <slot class="wrapper__bottom__info__form__label" name="writers"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Directeurs</b></span>
+                                <slot class="wrapper__bottom__info__form__label" name="directors"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Genres</b></span>
+                                <slot class="wrapper__bottom__info__form__label" name="genres"><span>...</span></slot>
                             </div>
                             <b>Description:</b>
                             <div class="wrapper__bottom__info__description">
