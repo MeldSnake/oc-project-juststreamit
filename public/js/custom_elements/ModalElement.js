@@ -1,9 +1,6 @@
 import APIUrl from "../Constants.js";
 
 class ModalElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     static register() {
         if (!ModalElement.__registered) {
             customElements.define("jsi-modal-titleinfo", ModalElement);

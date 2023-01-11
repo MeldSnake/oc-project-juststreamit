@@ -1,9 +1,6 @@
 import PlayButtonElement from "./PlayButtonElement.js";
 
 class VideoInfoElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     get titleid() {
         const titleid = this.getAttribute("data-titleid");
 
@@ -67,6 +64,7 @@ class VideoInfoElement extends HTMLElement {
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.__connectSignal = new AbortController();
+        /** @type {HTMLElement | null} */
         this.__root = this.shadowRoot.querySelector(".videoinfo");
         this.attributeChangedCallback("infolevel", null, this.infolevel);
         /** @type {PlayButtonElement | null} */
@@ -80,7 +78,6 @@ class VideoInfoElement extends HTMLElement {
     }
 
     /**
-     * 
      * @param {MutationRecord[]} mutations
      * @param {MutationObserver} _
      */
@@ -136,9 +133,10 @@ class VideoInfoElement extends HTMLElement {
     }
 
     /**
-     * @param {string} name
-     * @param {any} oldValue
-     * @param {any} newValue
+     * Called during the life-cycle of the custom element for each attribute named given within the observedAttribute static field.
+     * @param {"infolevel"} name
+     * @param {"full" | "short" | null} oldValue
+     * @param {"full" | "short" | null} newValue
      */
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.__root === null)
@@ -157,9 +155,9 @@ class VideoInfoElement extends HTMLElement {
     }
 
     /**
-     * @param {import('../models.js').ITitleShortData} titleInfo 
-     * @param {boolean} short 
-     * @returns 
+     * @param {import('../models.js').ITitleShortData} titleInfo
+     * @param {boolean} short
+     * @returns {VideoInfoElement}
      */
     static fromTitleInfo(titleInfo, short = true) {
         const element = new VideoInfoElement();

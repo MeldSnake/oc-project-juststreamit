@@ -5,9 +5,6 @@ import ModalElement from "./ModalElement.js";
 import VideoInfoElement from "./VideoInfoElement.js";
 
 class RootElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     static register() {
         if (!RootElement.__registered) {
             VideoInfoElement.register();
@@ -84,7 +81,7 @@ class RootElement extends HTMLElement {
     }
 
     /**
-     * @param {CustomEvent<number>} event 
+     * @param {CustomEvent<number>} event
      */
     async _onInfoTitle(event) {
         event.preventDefault();

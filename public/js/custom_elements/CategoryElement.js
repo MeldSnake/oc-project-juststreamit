@@ -3,13 +3,9 @@ import APIUrl from "../Constants.js";
 import VideoInfoElement from "./VideoInfoElement.js";
 
 class CategoryElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     static register() {
         if (!CategoryElement.__registered) {
             CarouselElement.register();
-
             customElements.define("jsi-category", CategoryElement);
             CategoryElement.__registered = true;
         }
@@ -149,7 +145,7 @@ class CategoryElement extends HTMLElement {
         if (data === undefined || data === null)
             return [];
         return data.results
-            .map(VideoInfoElement.fromTitleInfo.bind(null))
+            .map(x => VideoInfoElement.fromTitleInfo(x))
             .filter((x) => x !== undefined);
     }
 

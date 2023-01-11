@@ -1,7 +1,4 @@
 class CarouselElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     static register() {
         if (!CarouselElement.__registered) {
             customElements.define("jsi-carousel", CarouselElement);
@@ -17,6 +14,7 @@ class CarouselElement extends HTMLElement {
         if (this.shadowRoot === null) {
             throw new Error("Unable to attach a shadow root");
         }
+        /** @type {HTMLElement[]} */
         this.items = [];
         const template = document.querySelector("template#carouseltemplate");
 
@@ -93,13 +91,15 @@ class CarouselElement extends HTMLElement {
             nextElement = elements.shift();
         }
         if (nextElement !== undefined) {
-            nextElement.scrollIntoViewIfNeeded(false);
+            nextElement.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+            });
         }
         return;
     }
 
     /**
-     * 
      * @param {MutationRecord[]} mutations
      * @param {MutationObserver} _observer
      */
@@ -133,9 +133,9 @@ class CarouselElement extends HTMLElement {
                     if (idxInsert === -1) {
                         idxInsert = this.items.length - 1;
                     }
-                    this.items.push(...Array.prototype.filter((x) => x instanceof HTMLElement, mutation.addedNodes), ...this.items.splice(idxInsert));
+                    this.items.push(...Array.from(mutation.addedNodes).filter((x) => x instanceof HTMLElement), ...this.items.splice(idxInsert));
                 } else {
-                    this.items.push(...Array.prototype.filter((x) => x instanceof HTMLElement, mutation.addedNodes));
+                    this.items.push(...Array.from(mutation.addedNodes).filter((x) => x instanceof HTMLElement));
                 }
             }
         }

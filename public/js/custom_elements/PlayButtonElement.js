@@ -1,7 +1,4 @@
 class PlayButtonElement extends HTMLElement {
-    /** @type {boolean | undefined} */
-    static __registered;
-
     static register() {
         if (!PlayButtonElement.__registered) {
             customElements.define("jsi-play-button", PlayButtonElement);
