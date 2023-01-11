@@ -1,0 +1,43 @@
+:host {
+    width: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    @media (orientation: landscape) {
+        jsi-video-info {
+            width: 25vh;
+            height: 15vh;
+        }
+        
+        jsi-video-info[infolevel="full"] {
+            width: auto;
+            height: 25vw;
+        }
+    }
+
+    @media (orientation: portrait) {
+        jsi-video-info {
+            width: 20vh;
+            height: 10vh;
+        }
+
+        jsi-video-info[infolevel="full"] {
+            width: auto;
+            height: 25vh;
+        }
+    }
+
+    jsi-video-info:not([infolevel]) {
+        margin: 0.3em;
+    }
+    
+    jsi-carousel {
+        height: auto;
+        width: 90%;
+    }
+
+}

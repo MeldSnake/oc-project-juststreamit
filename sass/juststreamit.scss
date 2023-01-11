@@ -6,49 +6,6 @@ body {
     color: $default_fg;
 }
 
-#root {
-    width: 100%;
-    margin: 0;
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-
-    @media (orientation: landscape) {
-        video-info {
-            width: 25vh;
-            height: 15vh;
-        }
-        
-        video-info[infolevel="full"] {
-            width: 100%;
-            height: 25vw;
-        }
-    }
-    
-    @media (orientation: portrait) {
-        video-info {
-            width: 20vh;
-            height: 10vh;
-        }
-    
-        video-info[infolevel="full"] {
-            width: 100%;
-            height: 25vh;
-        }
-    }
-    
-    video-info:not([infolevel]) {
-        margin: 0.3em;
-    }
-    
-    jsi-carousel {
-        height: auto;
-        width: 90%;
-    }
-}
-
 #modal {
     position: absolute;
     top: 50%;
@@ -62,6 +19,11 @@ body {
     border-radius: 5vmin;
     margin: 0;
     z-index: 1;
+    display: none;
+
+    &:not(.modal--show) {
+        display: none;
+    }
 
     .modal__wrapper {
         display: flex;
