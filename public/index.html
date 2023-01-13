@@ -52,45 +52,44 @@
         </template>
         <template id="modaltemplate">
             <link rel="stylesheet" href="styles/modal.css">
-            <div id="border" class="border">
-                <div class="wrapper">
-                    <div class="wrapper__top">
-                        <slot name="title">Title</slot>
+            <div id="wrapper" class="wrapper">
+                <div class="wrapper__top">
+                    <span id="button-close" class="wrapper__top__close">x</span>
+                    <slot name="title">Title</slot>
+                </div>
+                <div class="wrapper__bottom">
+                    <div class="wrapper__bottom__cover">
+                        <picture id="cover">
+                            <img src="imgs/nocover.png" alt="Couverture du film">
+                        </picture>
                     </div>
-                    <div class="wrapper__bottom">
-                        <div class="wrapper__bottom__cover">
-                            <picture id="cover">
-                                <img src="imgs/nocover.png" alt="Couverture du film">
-                            </picture>
+                    <div class="wrapper__bottom__info">
+                        <b>Informations:</b>
+                        <div class="wrapper__bottom__info__form">
+                            <span class="wrapper__bottom__info__form__label"><b>Score ImDB</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="score"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Acteurs</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="actors"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Scenaristes</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="writers"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Directeurs</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="directors"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Genres</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="genres"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Metascore</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="rating"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Date</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="date"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Durée</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="duration"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Pays</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="origin"><span>...</span></slot>
+                            <span class="wrapper__bottom__info__form__label"><b>Box Office</b></span>
+                            <slot class="wrapper__bottom__info__form__value" name="box_office"><span>...</span></slot>
                         </div>
-                        <div class="wrapper__bottom__info">
-                            <b>Informations:</b>
-                            <div class="wrapper__bottom__info__form">
-                                <span class="wrapper__bottom__info__form__label"><b>Score ImDB</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="score"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Acteurs</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="actors"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Scenaristes</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="writers"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Directeurs</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="directors"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Genres</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="genres"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Metascore</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="rating"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Date</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="date"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Durée</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="duration"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Pays</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="origin"><span>...</span></slot>
-                                <span class="wrapper__bottom__info__form__label"><b>Box Office</b></span>
-                                <slot class="wrapper__bottom__info__form__value" name="box_office"><span>...</span></slot>
-                            </div>
-                            <b>Description:</b>
-                            <div class="wrapper__bottom__info__description">
-                                <slot name="description">Aucune description disponible.</slot>
-                            </div>
+                        <b>Description:</b>
+                        <div class="wrapper__bottom__info__description">
+                            <slot name="description">Aucune description disponible.</slot>
                         </div>
                     </div>
                 </div>

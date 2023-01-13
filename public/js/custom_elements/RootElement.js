@@ -83,9 +83,6 @@ class RootElement extends HTMLElement {
                 .catch((e) => {
                     console.error("Unable to obtain the best movie", e);
                 });
-            this.addEventListener("infotitle", this._onInfoTitle.bind(this), {
-                signal: this.__viewSignal.signal,
-            });
         } else {
             this._getCategories(this.__viewSignal.signal)
                 .then((categories) => {
@@ -97,6 +94,9 @@ class RootElement extends HTMLElement {
                     console.error("Unable to obtain the categories list", e);
                 });
         }
+        this.addEventListener("infotitle", this._onInfoTitle.bind(this), {
+            signal: this.__viewSignal.signal,
+        });
     }
 
     connectedCallback() {

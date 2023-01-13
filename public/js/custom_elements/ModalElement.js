@@ -30,7 +30,11 @@ const MappedSlotModalData = new Map([
     ["genres", x => x.genres.join(", ")],
     ["rating", x => {
         if (x.metascore !== null) {
-            return x.metascore.toFixed(0);
+            if (typeof (x.metascore) === "string" && x.metascore !== "") {
+                return x.metascore;
+            } else if (typeof (x.metascore) === "number") {
+                return x.metascore.toFixed(0);
+            }
         }
         return "0.0";
     }],
@@ -68,13 +72,14 @@ class ModalElement extends HTMLElement {
         }
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         /** @type {HTMLElement | null} */
-        this.__border = this.shadowRoot.getElementById("border");
+        this.__border = this.shadowRoot.getElementById("wrapper");
         this.__mutationObserver = new MutationObserver(this.__onMutation.bind(this));
         this.__mutationObserver.observe(this, {
             childList: true,
         });
         /** @type {HTMLPictureElement | null} */
         this.__picture = this.shadowRoot.getElementById("cover");
+        this.__closeButton = this.shadowRoot.getElementById("button-close");
     }
 
     connectedCallback() {
@@ -95,6 +100,11 @@ class ModalElement extends HTMLElement {
         this.addEventListener("click", this._onQuit.bind(this), {
             signal: this.__connectedSignal.signal,
         });
+        if (this.__closeButton !== null) {
+            this.__closeButton.addEventListener("click", this.dispatchEvent.bind(this, new Event("close")), {
+                signal: this.__connectedSignal.signal,
+            });
+        }
     }
 
     disconnectedCallback() {
