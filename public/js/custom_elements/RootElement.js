@@ -78,6 +78,7 @@ class RootElement extends HTMLElement {
 
     __modalTerminated() {
         this.__modalSignal = undefined;
+        this.ownerDocument.body.classList.remove("no-scroll");
     }
 
     /**
@@ -98,6 +99,7 @@ class RootElement extends HTMLElement {
             modal.addEventListener("close", this.__modalSignal.abort.bind(this.__modalSignal));
             this.shadowRoot.insertBefore(modal, this.shadowRoot.firstChild);
             this.__modalSignal.signal.addEventListener("abort", this.__modalTerminated.bind(this));
+            this.ownerDocument.body.classList.add("no-scroll");
         } catch (err) {
             this.__modalSignal.abort();
             console.error(err);

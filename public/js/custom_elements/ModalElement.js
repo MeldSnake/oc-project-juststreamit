@@ -1,11 +1,48 @@
 import APIUrl from "../Constants.js";
 
+/**
+ * @param {number} minutes
+ */
+function minutesToHour(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const left_minutes = minutes % 60;
+
+    if (left_minutes !== 0) {
+        return `${hours} heures, ${left_minutes} minutes`;
+    }
+    return `${hours} heures`;
+}
+
+/**
+ * @param {string} dateString
+ */
+function toLocaleDate(dateString) {
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString();
+}
+
 const MappedSlotModalData = new Map([
     ["score", x => x.imdb_score],
     ["actors", x => x.actors.join(", ")],
     ["writers", x => x.writers.join(", ")],
     ["directors", x => x.directors.join(", ")],
     ["genres", x => x.genres.join(", ")],
+    ["rating", x => {
+        if (x.metascore !== null) {
+            return x.metascore.toFixed(0);
+        }
+        return "0.0";
+    }],
+    ["date", x => toLocaleDate(x.date_published)],
+    ["duration", x => minutesToHour(x.duration) + ` (${x.duration} minutes)`],
+    ["origin", x => x.countries.join(", ")],
+    ["box_office", x => {
+        if (x.worldwide_gross_income === null) {
+            return "0";
+        }
+        return x.worldwide_gross_income.toFixed(0);
+    }],
 ]);
 
 class ModalElement extends HTMLElement {
@@ -91,8 +128,9 @@ class ModalElement extends HTMLElement {
         if (this.__border === null)
             return;
         if (this.__border === _event.currentTarget) {
-            _event.stopPropagation();
+            _event.stopImmediatePropagation();
         } else {
+            _event.stopPropagation();
             this.dispatchEvent(new Event("close"));
         }
     }
