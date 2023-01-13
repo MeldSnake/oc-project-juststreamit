@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes" />
-        <link rel="stylesheet" type="text/css" charset="UTF-8" href="styles/juststreamit.css" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+        <link rel="stylesheet" type="text/css" href="styles/juststreamit.css">
         <script src="js/app.js" type="module"></script>
         <title>JustStreamIt</title>
         <meta name="description" content="JustStreamIt: Application de lecture de film en ligne.">
@@ -18,7 +17,7 @@
                     <img class="videoinfo__cover" src="imgs/nocover.png" alt="Couverture du film">
                 </picture>
                 <div class="videoinfo__data">
-                    <div class="videoinfo__data__info"">
+                    <div class="videoinfo__data__info">
                         <slot name="title">Titre du film</slot>
                         <span class="videoinfo__data__info__extra">
                             <slot name="score">0.0</slot>
@@ -67,16 +66,26 @@
                         <div class="wrapper__bottom__info">
                             <b>Informations:</b>
                             <div class="wrapper__bottom__info__form">
-                                <span class="wrapper__bottom__info__form__label"><b>Score</b></span>
-                                <slot class="wrapper__bottom__info__form__label" name="score"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Score ImDB</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="score"><span>...</span></slot>
                                 <span class="wrapper__bottom__info__form__label"><b>Acteurs</b></span>
-                                <slot class="wrapper__bottom__info__form__label" name="actors"><span>...</span></slot>
+                                <slot class="wrapper__bottom__info__form__value" name="actors"><span>...</span></slot>
                                 <span class="wrapper__bottom__info__form__label"><b>Scenaristes</b></span>
-                                <slot class="wrapper__bottom__info__form__label" name="writers"><span>...</span></slot>
+                                <slot class="wrapper__bottom__info__form__value" name="writers"><span>...</span></slot>
                                 <span class="wrapper__bottom__info__form__label"><b>Directeurs</b></span>
-                                <slot class="wrapper__bottom__info__form__label" name="directors"><span>...</span></slot>
+                                <slot class="wrapper__bottom__info__form__value" name="directors"><span>...</span></slot>
                                 <span class="wrapper__bottom__info__form__label"><b>Genres</b></span>
-                                <slot class="wrapper__bottom__info__form__label" name="genres"><span>...</span></slot>
+                                <slot class="wrapper__bottom__info__form__value" name="genres"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Metascore</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="rating"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Date</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="date"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Durée</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="duration"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Pays</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="origin"><span>...</span></slot>
+                                <span class="wrapper__bottom__info__form__label"><b>Box Office</b></span>
+                                <slot class="wrapper__bottom__info__form__value" name="box_office"><span>...</span></slot>
                             </div>
                             <b>Description:</b>
                             <div class="wrapper__bottom__info__description">
@@ -89,6 +98,17 @@
         </template>
     </head>
     <body>
+        <header>
+            <a class="logo">
+                <picture>
+                    <img src="imgs/logo.png" alt="JustStreamIt">
+                </picture>
+            </a>
+            <div class="menu">
+                <span class="menu__link">Acceuil</span>
+                <span class="menu__link">Categories</span>
+            </div>
+        </header>
         <noscript>Vous devez activer javascript pour utiliser ce site.</noscript>
         <jsi-root id="root"></jsi-root>
     </body>
