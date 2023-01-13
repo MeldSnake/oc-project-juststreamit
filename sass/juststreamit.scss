@@ -54,8 +54,17 @@ body {
             flex-grow: 1;
     
             &__link {
+                color: white;
                 margin-left: 2em;
                 cursor: pointer;
+                padding: 0.2em;
+                background-color: transparent;
+
+                &:hover {
+                    color: $button_fg;
+                    background-color: $button_active;
+                    border-radius: 0.2em;
+                }
             }
         }
     }

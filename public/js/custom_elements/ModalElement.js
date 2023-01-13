@@ -179,7 +179,9 @@ class ModalElement extends HTMLElement {
         description.slot = "description";
         description.innerText = data.long_description;
         modal.appendChild(description);
-        signal === null || signal === void 0 ? void 0 : signal.addEventListener("abort", () => modal.remove());
+        if (signal !== null && signal !== undefined) {
+            signal.addEventListener("abort", () => modal.remove());
+        }
         return modal;
     }
 }

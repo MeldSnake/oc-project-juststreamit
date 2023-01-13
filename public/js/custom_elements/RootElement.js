@@ -34,6 +34,71 @@ class RootElement extends HTMLElement {
         shadow.appendChild(this.__link);
     }
 
+    onHashChanged(ev, force = false) {
+        if (ev.oldURL === "") {
+        }
+        const oldURL = ev.oldURL === "" ? null : new URL(ev.oldURL);
+        const newURL = ev.newURL === "" ? null : new URL(ev.newURL || ".");
+
+        if (oldURL !== null && oldURL.hash === "#categories") {
+            if (newURL !== null && newURL.hash !== "#categories") {
+                this.updateView(false);
+            } else if (force) {
+                this.updateView(true);
+            }
+        } else {
+            if (newURL !== null && newURL.hash === "#categories") {
+                this.updateView(true);
+            } else if (force) {
+                this.updateView(false);
+            }
+        }
+    }
+
+    updateView(isCategories) {
+        if (this.__viewSignal !== undefined) {
+            this.__viewSignal.abort();
+        }
+        this.__viewSignal = new AbortController();
+        while (this.shadowRoot.lastChild !== null && this.shadowRoot.lastChild.nodeName.toLowerCase() !== "link") {
+            const child = this.shadowRoot.lastChild;
+
+            if (child instanceof HTMLElement && child.tagName.toLowerCase() !== "link") {
+                this.shadowRoot.removeChild(child);
+                while (child.parentElement === this.shadowRoot) {
+                    child.remove();
+                }
+            }
+        }
+        if (!isCategories) {
+            this.__categories_names.forEach(x => {
+                this.shadowRoot.appendChild(this._categoryTitles(x));
+            });
+            this._bestMovie(this.__viewSignal.signal)
+                .then((title) => {
+                    if (title && this.shadowRoot !== null) {
+                        this.shadowRoot.insertBefore(title, this.__link.nextSibling);
+                    }
+                })
+                .catch((e) => {
+                    console.error("Unable to obtain the best movie", e);
+                });
+            this.addEventListener("infotitle", this._onInfoTitle.bind(this), {
+                signal: this.__viewSignal.signal,
+            });
+        } else {
+            this._getCategories(this.__viewSignal.signal)
+                .then((categories) => {
+                    categories.forEach(x => {
+                        this.shadowRoot.appendChild(this._categoryTitles(x));
+                    });
+                })
+                .catch((e) => {
+                    console.error("Unable to obtain the categories list", e);
+                });
+        }
+    }
+
     connectedCallback() {
         if (!this.isConnected)
             return;
@@ -48,26 +113,20 @@ class RootElement extends HTMLElement {
         }, {
             once: true,
         });
-        this.__categories_names.forEach(x => {
-            this.shadowRoot.appendChild(this._categoryTitles(x));
-        });
-        this._bestMovie(this.__connectedSignal.signal)
-            .then((title) => {
-                if (title && this.shadowRoot !== null) {
-                    this.shadowRoot.insertBefore(title, this.shadowRoot.firstChild);
-                }
-            })
-            .catch((e) => {
-                console.error("Unable to obtain the best movie", e);
-            });
-        this.addEventListener("infotitle", this._onInfoTitle.bind(this), {
+        window.addEventListener("hashchange", this.onHashChanged.bind(this), {
             signal: this.__connectedSignal.signal,
         });
+        this.onHashChanged(new HashChangeEvent("", {
+            newURL: this.ownerDocument.location.href,
+        }), true);
     }
 
     disconnectedCallback() {
         if (this.__connectedSignal !== undefined) {
             this.__connectedSignal.abort();
+        }
+        if (this.__viewSignal !== undefined) {
+            this.__viewSignal.abort();
         }
         for (const child of this.childNodes) {
             if (child instanceof HTMLElement && child.tagName !== "link") {
@@ -130,6 +189,37 @@ class RootElement extends HTMLElement {
         if (!data || data.results.length === 0 || !data.results[0])
             return null;
         return VideoInfoElement.fromTitleInfo(data.results[0], false);
+    }
+
+    async _getCategories(signal) {
+        const apiURL = APIUrl();
+        let url = new URL("genres", apiURL);
+        const categories = Array();
+
+        while (true) {
+            const response = await fetch(url, {
+                method: "GET",
+                redirect: "follow",
+                mode: "cors",
+                signal: signal,
+            });
+
+            if (!response.ok)
+                break;
+            /** @type {import('../models.js').IPagination<import('../models.js').IGenreData>|null|undefined} */
+            const data = await response.json();
+
+            if (!data || data.results.length === 0 || !data.results[0])
+                break;
+            for (const category of data.results) {
+                categories.push(category.name);
+            }
+            if (data.next === null) {
+                break;
+            }
+            url = new URL(data.next, apiURL);
+        }
+        return categories;
     }
 
     /**
